@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="" style="height:100%; width:100%;">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+  <link href="yuqing/scripts/layui/css/layui.css" rel="stylesheet" />
+  <script src="yuqing/scripts/jquery-3.4.1.js"></script>
+  <script src="yuqing/scripts/layui/layui.js"></script>
+  <script src="yuqing/scripts/Custom/Global.js"></script>
+  <script src="yuqing/scripts/Custom/Common.js"></script>
+  <script>
+    var element;
+    var layer;
+    var page;
+    var laydate;
+    var table;
+    var form;
+    var carousel;
+
+    var upload;
+    var laypage;
+    var dataTable;
+
+    var defaultTableLimit = 10;
+
+
+    layui.use(['form', 'table', 'laypage', 'laydate', 'layer', 'element', 'carousel', 'upload'], function () {
+      element = layui.element;
+      layer = layui.layer;
+      page = layui.laypage;
+      laydate = layui.laydate;
+      table = layui.table;
+      form = layui.form;
+      carousel = layui.carousel;
+      upload = layui.upload;
+    });
+
+    function openUrl(url) {
+      let userAgent = window.navigator.userAgent.toLowerCase();
+      console.log(userAgent);
+      if (userAgent.match(/MicroMessenger/i) == "micromessenger") {
+        //在微信中打开
+        window.location.href = url;
+      }
+      else if (userAgent.match(/WeiBo/i) == "weibo") {
+        //在新浪微博客户端打开
+        window.location.href = url;
+      }
+      else if (userAgent.match(/QQ/i) == "qq") {
+        //在QQ空间打开
+        window.location.href = url;
+      }
+      else {
+        window.location.href = url;
+      }
+    }
+
+  </script>
+  <title>舆情监测分系统</title>
+</head>
+
+<body style="height:100%; width:100%; overflow-x: hidden; background-color: #f8f8f8;">
+  <div id="app" style="height:100%; width:100%;display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;"></div>
+  <!-- built files will be auto injected -->
+</body>
+
+</html>
