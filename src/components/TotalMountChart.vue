@@ -52,17 +52,17 @@ export default {
       },
       loadData(planId, startDate, endDate) {
         let _this = this;
-        console.log(planId);
+        // console.log(planId);
         Event.TotalMount(
           planId,
           startDate,
           endDate,
           function (data, response) {
-            console.log(data);
+            // console.log(data);
             _this.initEChart(data, planId);
           },
           function (error) {
-            console.log(error);
+            // console.log(error);
           }
         );
       },
@@ -73,8 +73,8 @@ export default {
         this.init("", "");
       },
       init(startDate, endDate) {
-        console.log(startDate);
-        console.log(endDate);
+        // console.log(startDate);
+        // console.log(endDate);
 
         if (startDate != "") {
           startDate += " 00:00:00";
@@ -85,13 +85,11 @@ export default {
         this.loadData(props.planId, startDate, endDate);
       },
       initEChart(data, planId) {
-        console.log(data);
+        // console.log(data);
         if (this.eChart == null) {
           this.eChart = echarts.init(
             document.getElementById("totalMountCanvas")
           );
-
-          
         }
         let source = new Array();
         let i = 0;
@@ -99,7 +97,6 @@ export default {
         source[i].push("日期");
         source[i].push("总数");
         let color = props.DarkMode ? "#fff" : "#000";
-
         for (let item of data) {
           if (item.value == 0) {
             continue;
@@ -153,12 +150,13 @@ export default {
           );
         }
         let option = this.initOption(this.planName, series, source);
-        console.log(option);
+        // console.log(option);
         this.eChart.setOption(option, true);
-
         this.eChart.off('click');
         this.eChart.on('click', function (params) {
-          window.location.href = '?page=plan&category=totalmount&key=' + planId;
+          
+          // window.location.href = '?page=plan&category=totalmount&key=' + planId;
+          window.location.href=`?page=plan&form=dashboard&key=${planId}&date=${params.data[0]}`
         });
 
       },

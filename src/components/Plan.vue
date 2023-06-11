@@ -111,7 +111,7 @@
               </div>
               <div class="plan-content-row" style="margin: 1vw 0 0 0">
                 <div v-if="user.roleRights.determine" class="plan-button-div" v-on:click="viewList(item)">
-                  研判
+                  研判1
                 </div>
                 <div v-if="user.roleRights.directionalMonitoring" class="plan-button-div" v-on:click="showMonitor(item)">
                   定向监测
@@ -1957,7 +1957,7 @@
           </div>
         </div>
       </div>
-      <div class="model-multi-row-div">
+      <div class="model-multi-row-div1">
         <div style="
               width: 7.5%;
               display: flex;
@@ -2195,7 +2195,7 @@
     </div>
     <div class="model-buttons-div">
       <div class="model-button-div" v-on:click="save">保存</div>
-      <div class="model-button-div" v-on:click="hideModel">取消</div>
+      <div class="model-button-div" v-on:click="showedAddPlan=false">取消</div>
     </div>
   </div>
 </template>
@@ -2873,7 +2873,11 @@ a {
   height: auto;
   margin: 0.5vw 0 0 0;
 }
-
+.model-multi-row-div1{
+  display: flex;
+  margin: 0.5vw 0 0 0;
+  width: 95%;
+}
 .model-title-div {
   display: flex;
   flex-direction: row;
@@ -3577,6 +3581,7 @@ th div {
  background-image: linear-gradient(to right,#359FD4,#36B5C8,#25D8AB)
   */
 //通过this.$echarts来使用
+import dayjs from 'dayjs'
 import { reactive, ref, watch, defineComponent } from "vue";
 import Plan from "../model/Plan";
 import SensitiveWords from "../model/SensitiveKeywords";
@@ -3759,6 +3764,26 @@ export default {
   },
   mounted() {
     let _this = this;
+    console.log('this.$router')
+    console.log(this.$route.query.form)
+    if(this.$route.query.form && this.$route.query.form==='dashboard'){
+      let obj={
+        fid:this.$route.query.key
+      }
+      if(this.$route.query.date){
+        let date=this.$route.query.date
+        this.createdStartDate=dayjs(date).format("YYYY-MM-DD")
+        this.createdEndDate=dayjs(this.createdStartDate).add(1, 'day').format("YYYY-MM-DD")
+      }
+      if(this.$route.query.sensitive){
+        this.sensitive=this.$route.query.sensitive
+      }
+      if(this.$route.query.emotion){
+        this.emotion=this.$route.query.emotion
+      }
+      this.viewList(obj)
+      this.showedPlanResult = true;
+    }
     window.removeContact = function (index) {
       _this.removeContact(index);
     };
@@ -5412,10 +5437,14 @@ if(!duplicated){
     },
     viewList(item) {
       let _this = this;
-      console.log(item);
-      this.selectedPlan = item.fid;
-      this.eventKeywords = JSON.parse(item.eventKeyword.replace(/\'/g, '"'));
-
+      // console.log(item);
+      if(item.fid){
+        this.selectedPlan = item.fid;
+      }
+      if(item.eventKeyword){
+        this.eventKeywords = JSON.parse(item.eventKeyword.replace(/\'/g, '"'));
+      }
+      
       if (this.sources.length > 0) {
         this.planResultQuery();
       } else {
@@ -5430,14 +5459,13 @@ if(!duplicated){
       }
     },
     viewDetail(item) {
-      console.log(item);
+      
       this.planId = item.fid;
       this.planName = item.programmeName;
       this.startDate = item.startDate.substring(0, 10);
       this.endDate = item.endDate.substring(0, 10);
       this.match = item.matchType.toString();
       this.priority = item.priority.toString();
-      
       this.eventKeywords = JSON.parse(item.eventKeyword.replace(/\'/g, '"'));
       this.regionKeywords = JSON.parse(item.regionKeyword.replace(/\'/g, '"'));
       this.sensitiveWords = JSON.parse(item.sensitiveword.replace(/\'/g, '"'));
@@ -5450,6 +5478,7 @@ if(!duplicated){
         this.checkboxes.push("criticalPlan");
       }
       this.addPlan();
+     
     },
     showTip(id, tip) {
       layer.tips("<div class='model-tip-div'>" + tip + "</div>", "#" + id, {
@@ -5545,6 +5574,7 @@ if(!duplicated){
       this.endDate = event.target.value;
     },
     reset() {
+      this.plans=[];
       this.planId = "";
       this.planName = "";
       this.startDate = "";
@@ -5650,6 +5680,7 @@ if(!duplicated){
       this.GetPlans();
     },
     GetPlans() {
+      var index = layer.load(0, {shade: false});
       let _this = this;
       Plan.Get(
         1,
@@ -5659,7 +5690,7 @@ if(!duplicated){
           console.log(data);
           console.log(data.fangAnContent);
           _this.plans = data.fangAnContent;
-
+          layer.close(index); // 关闭 loading
           if(_this.category != '' && _this.category != null){
             
               for(let item of data.fangAnContent){
@@ -5694,6 +5725,7 @@ if(!duplicated){
 
                 }
         },
+        
         _this.errorHanlder
       );
     },

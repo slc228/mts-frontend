@@ -31,14 +31,22 @@ export default class SensitiveKeywords  {
          success, failure);
         
     }
-    static AddSensitiveCategory(name, success, failure){
+    static AddSensitiveCategory(data, success, failure){
         Request.Post("data/addSensitiveWordType",
         {
-            text: name
+           ...data
         },
          success, failure);
         
     }
+    static UpdateSensitiveWordType(data, success, failure){
+      Request.Post("data/updateSensitiveWordType",
+      {
+         ...data
+      },
+       success, failure);
+      
+  }
     static DeleteSensitiveCategory(id, success, failure){
         Request.Post("data/deleteSensitiveWordType",
         {

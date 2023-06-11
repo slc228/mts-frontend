@@ -50,13 +50,13 @@ export default {
       },
       loadData(planId, startDate, endDate) {
         let _this = this;
-        console.log(planId);
+        // console.log(planId);
         Event.Senseitive(
           planId,
           startDate,
           endDate,
           function (data, response) {
-            console.log(data);
+            // console.log(data);
 
             let source = new Array();
 
@@ -91,8 +91,8 @@ export default {
         this.init("", "");
       },
       init(startDate, endDate) {
-        console.log(startDate);
-        console.log(endDate);
+        // console.log(startDate);
+        // console.log(endDate);
 
         if (startDate != "") {
           startDate += " 00:00:00";
@@ -104,7 +104,7 @@ export default {
 
       },
       initEChart(data, planId) {
-        console.log(data);
+        // console.log(data);
         if (this.eChart == null) {
           this.eChart = echarts.init(
             document.getElementById("sensitiveCanvas")
@@ -112,10 +112,11 @@ export default {
         }
         this.eChart.off('click');
         this.eChart.on('click', function (params) {
-          window.location.href = '?page=plan&category=sensitive&key=' + planId;
+          // window.location.href = '?page=plan&category=sensitive&key=' + planId;
+          window.location.href=`?page=plan&form=dashboard&key=${planId}&sensitive=${params.data.name==='敏感信息'?2:1}`
         });
         let option = this.initOption(this.planName, data);
-        console.log(option);
+        // console.log(option);
         this.eChart.setOption(option, true);
       },
       initOption(title, data) {

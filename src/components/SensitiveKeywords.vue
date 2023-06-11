@@ -89,6 +89,7 @@
             ">
               <div class="button-div" v-on:click="showNewCategoryModel">添加</div>
               <div class="button-div" v-on:click="deleteCategoryConfirm">删除</div>
+              <div class="button-div" v-on:click="editCategoryConfirm">编辑</div>
             </div>
             <div style="
               display: flex;
@@ -109,9 +110,9 @@
                 justify-content: start;
                 margin: 0 0 0 1vw;
                 font-size: 1vw;
-              " v-for="(item, index) in types" v-bind:key="index">
+              " v-for="(item, index) in types" v-bind:key="index" v-on:click="CheckBoxOneOnClick(item)">
                 <input type="checkbox" class="model-checkbox" v-model="checkboxes" v-bind:value="item.id" />
-                <div style="cursor: pointer; font-size: 1vw" v-on:click="CheckBoxOnClick(item.id)">
+                <div style="cursor: pointer; font-size: 1vw" >
                   {{ item.value }}
                 </div>
               </div>
@@ -144,7 +145,18 @@
           width: 90%;
           margin: 1vw 0 0 0;
         ">
-        <input id="input" type="text" class="model-input" v-model="newCategory" placeholder="请输入新的分类"
+        分类：<input id="input" type="text" class="model-input" v-model="newCategory" placeholder="请输入新的分类"
+          style="margin: 0.1vw 0 0 0; width: 80%; height: 1.7vw" />
+      </div>
+      <div style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: flex-start;
+          width: 90%;
+          margin: 1vw 0 0 0;
+        ">
+        编号：<input id="input" type="text" class="model-input" v-model="order" placeholder="请输入编号"
           style="margin: 0.1vw 0 0 0; width: 80%; height: 1.7vw" />
       </div>
     </div>
@@ -629,6 +641,7 @@ export default {
       selectedType: { value: '' },
       newWord: "",
       newCategory: "",
+      order:'',
       checkboxes: [],
       user: {
         roleRights: {
@@ -660,6 +673,21 @@ export default {
           layer.close(index);
         });
     },
+    //编辑分类
+    editCategoryConfirm(){
+      if (this.checkboxes.length == 0) {
+        layer.msg('请选择一条数据')
+        // alert('请选择一条数据')
+        return;
+      }
+      if(this.checkboxes.length>1){
+        layer.msg('只能选择一条数据')
+        return
+      }
+      this.newCategory=this.currentObj.value;
+      this.order=this.currentObj.order
+      this.showNewCategory=true
+    },
     deleteCategory() {
       let _this = this;
       let id = this.checkboxes[0];
@@ -680,19 +708,34 @@ export default {
     },
     saveNewCategory() {
       let _this = this;
-      SensitiveWords.AddSensitiveCategory(
-        this.newCategory,
-        function (data, response) {
-          console.log(data);
-          if (data.addSensitiveWordType == 1) {
-            _this.GetTypes();
-            _this.hideModel();
-          }
-        },
-        _this.errorHanlder
-      );
+      if(this.currentObj.id){
+        SensitiveWords.UpdateSensitiveWordType(
+          {order:Number(_this.order),text: _this.newCategory,typeId:_this.currentObj.id},
+          function (data, response) {
+            if (data.updateSensitiveWordType == 1) {
+              _this.GetTypes();
+              _this.hideModel();
+            }
+          },
+          _this.errorHanlder
+        );
+      }else{
+        SensitiveWords.AddSensitiveCategory(
+          {order:Number(_this.order),text: _this.newCategory},
+          function (data, response) {
+            if (data.addSensitiveWordType == 1) {
+              _this.GetTypes();
+              _this.hideModel();
+            }
+          },
+          _this.errorHanlder
+        );
+      }
+      
     },
     showNewCategoryModel() {
+      this.currentObj={}
+      this.order=''
       this.newCategory = "";
       this.showNewCategory = true;
     },
@@ -731,8 +774,6 @@ export default {
 
       let wordId = this.checkboxes[0];
       this.checkboxes = this.checkboxes.slice(1);
-      console.log(wordId);
-      console.log(this.checkboxes);
       SensitiveWords.DeleteSensitiveWord(
         wordId,
         function (data, response) {
@@ -812,6 +853,15 @@ export default {
         this.checkboxes.push(id);
       }
     },
+    CheckBoxOneOnClick(item){
+      this.currentObj={...item}
+      let id=item.id
+      if (this.checkboxes.indexOf(id) >= 0) {
+        this.checkboxes.splice(this.checkboxes.indexOf(id), 1);
+      } else {
+        this.checkboxes.push(id);
+      }
+    }
   },
 };
 </script>

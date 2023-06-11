@@ -52,13 +52,13 @@ export default {
       },
       loadData(planId, startDate, endDate) {
         let _this = this;
-        console.log(planId);
+        // console.log(planId);
         Event.SourceMount(
           planId,
           startDate,
           endDate,
           function (data, response) {
-            console.log(data);
+            // console.log(data);
             _this.initEChart(data, planId);
           },
           function (error) {
@@ -73,8 +73,8 @@ export default {
         this.init("", "");
       },
       init(startDate, endDate) {
-        console.log(startDate);
-        console.log(endDate);
+        // console.log(startDate);
+        // console.log(endDate);
 
         if (startDate != "") {
           startDate += " 00:00:00";
@@ -85,7 +85,7 @@ export default {
         this.loadData(props.planId, startDate, endDate);
       },
       initEChart(data, planId) {
-        console.log(data);
+        // console.log(data);
 
         let source = new Array();
         let series = new Array();
@@ -133,13 +133,13 @@ export default {
                 fontSize: 14,
                 distance: 40,
                 formatter: function (x) {
-                  console.log(x);
+                  // console.log(x);
                   return x.data[i + 1];
                 },
               },
             });
           }
-          console.log(source[i]);
+          // console.log(source[i]);
           category.push("总计");
           source[i].push("总计");
 
@@ -200,14 +200,14 @@ export default {
               fontSize: 14,
               distance: 40,
               formatter: function (x) {
-                console.log(x);
+                // console.log(x);
                 return x.data[7];
               },
             },
           });
         }
 
-        console.log(source);
+        // console.log(source);
 
         if (this.eChart == null) {
           this.eChart = echarts.init(
@@ -216,13 +216,14 @@ export default {
         }
         this.eChart.off('click');
         this.eChart.on('click', function (params) {
-          window.location.href = '?page=plan&category=sourcemount&key=' + planId;
+          window.location.href=`?page=plan&form=dashboard&key=${planId}&date=${params.data[0]}`
+          // window.location.href = '?page=plan&category=sourcemount&key=' + planId;
         });
 
         
 
         let option = this.initOption(this.planName, series, source, category);
-        console.log(option);
+        // console.log(option);
         this.eChart.setOption(option, true);
       },
       initOption(title, series, source, category) {
@@ -279,7 +280,7 @@ export default {
             animationDurationUpdate: 500, // 动画更新变化时间
             animationEasingUpdate: "quinticInOut",
             formatter: function (x) {
-              console.log(x);
+              // console.log(x);
               return (
                 x.seriesName +
                 " " +

@@ -52,13 +52,13 @@ export default {
       },
       loadData(planId, startDate, endDate) {
         let _this = this;
-        console.log(planId);
+        // console.log(planId);
         Event.Emotion(
           planId,
           startDate,
           endDate,
           function (data, response) {
-            console.log(data);
+            // console.log(data);
             _this.initEChart(data, planId);
           },
           function (error) {
@@ -73,8 +73,8 @@ export default {
         this.init("", "");
       },
       init(startDate, endDate) {
-        console.log(startDate);
-        console.log(endDate);
+        // console.log(startDate);
+        // console.log(endDate);
 
         if (startDate != "") {
           startDate += " 00:00:00";
@@ -85,7 +85,7 @@ export default {
         this.loadData(props.planId, startDate, endDate);
       },
       initEChart(data, planId) {
-        console.log(data);
+        // console.log(data);
 
         let total =
           data.surprise +
@@ -142,7 +142,7 @@ export default {
         source[i].push(((data.fear * 100) / total).toFixed(2));
 
         let color = props.DarkMode ? "#fff" : "#000";
-        console.log(source);
+        // console.log(source);
         let series = new Array();
         for (let i = 0; i < 6; i++) {
           series.push({
@@ -169,7 +169,7 @@ export default {
               distance: 40,
               //  color:"#13227a",
               formatter: function (x) {
-                console.log(x);
+                // console.log(x);
                 return x.seriesName; //+ "\r\n\r\n" + x.data[x.seriesIndex + 1] + "条"
               },
             },
@@ -228,15 +228,30 @@ export default {
         if (this.eChart == null) {
           this.eChart = echarts.init(document.getElementById("emotionCanvas"));
         }
-
         this.eChart.off('click');
         this.eChart.on('click', function (params) {
-          window.location.href = '?page=plan&category=emotion&key=' + planId;
+          // window.location.href = '?page=plan&category=emotion&key=' + planId;
+          let seriesName=params.seriesName
+          let emotion='';
+          if(seriesName==='愤怒'){
+            emotion='angry'
+          }else if(seriesName==='恐惧'){
+            emotion='fear'
+          }else if(seriesName==='震惊'){
+            emotion='surprise'
+          }else if(seriesName==='悲伤'){
+            emotion='sad'
+          }else if(seriesName==='中立'){
+            emotion='neutral'
+          }else if(seriesName==='积极'){
+            emotion='happy'
+          }
+          window.location.href=`?page=plan&form=dashboard&key=${planId}&emotion=${emotion}`
         });
         
 
         let option = this.initOption(props.planName, series, source);
-        console.log(option);
+        // console.log(option);
         this.eChart.setOption(option, true);
       },
       initOption(title, series, source) {
@@ -293,7 +308,7 @@ export default {
             animationDurationUpdate: 500, // 动画更新变化时间
             animationEasingUpdate: "quinticInOut",
             formatter: function (x) {
-              console.log(x);
+              // console.log(x);
               if (x.seriesType == "pie")
                 return x.data[0] + " [" + x.data[1] + "条，" + x.data[2] + "%]";
               else if (x.seriesType == "bar")
