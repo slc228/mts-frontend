@@ -89,7 +89,7 @@
             ">
               <div class="button-div" v-on:click="showNewCategoryModel">添加</div>
               <div class="button-div" v-on:click="deleteCategoryConfirm">删除</div>
-              <div class="button-div" v-on:click="editCategoryConfirm">编辑</div>
+              <!-- <div class="button-div" v-on:click="editCategoryConfirm">编辑</div> -->
             </div>
             <div style="
               display: flex;
@@ -103,7 +103,35 @@
               margin: 1vw 0 0 0;
                 line-height:2vw;
             ">
-              <div style="
+            <div>
+    <el-table :data="types" @select="CheckBoxTableOnClick">
+      <el-table-column type="selection" width="50" > </el-table-column>
+      <el-table-column align="center" prop="value" label="类型" width=300>
+      </el-table-column>
+      <el-table-column align="center" label="操作" width="300">
+      <template #default="scope">
+          <el-button
+            @click="editTypeConfirm(scope.row)"
+          >
+            <el-icon class="el-icon--center"><Edit /></el-icon>
+          </el-button>
+          <el-button
+            :disabled="scope.$index === types.length - 1"
+            @click="moveDown(scope.$index, scope.row)"
+          >
+            <el-icon class="el-icon--center"><Bottom /></el-icon>
+          </el-button>
+          <el-button
+            :disabled="scope.$index === 0"
+            @click="moveUp(scope.$index, scope.row)"
+          >
+          <el-icon class="el-icon--center"><Top /></el-icon>
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
+              <!-- <div style="
                 display: flex;
                 flex-direction: row;
                 align-items: center;
@@ -115,7 +143,7 @@
                 <div style="cursor: pointer; font-size: 1vw" >
                   {{ item.value }}
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -124,7 +152,7 @@
   </div>
 
   <div class="coverDiv" v-bind:class="{
-    showCoverDiv: showNewWord || showNewCategory,
+    showCoverDiv: showNewWord || showNewCategory||showEditCategory,
   }" v-on:click="hideModel"></div>
 
   <div class="new-word-model" v-bind:class="{
@@ -148,7 +176,7 @@
         分类：<input id="input" type="text" class="model-input" v-model="newCategory" placeholder="请输入新的分类"
           style="margin: 0.1vw 0 0 0; width: 80%; height: 1.7vw" />
       </div>
-      <div style="
+      <!-- <div style="
           display: flex;
           flex-direction: row;
           align-items: center;
@@ -158,10 +186,38 @@
         ">
         编号：<input id="input" type="text" class="model-input" v-model="order" placeholder="请输入编号"
           style="margin: 0.1vw 0 0 0; width: 80%; height: 1.7vw" />
-      </div>
+      </div> -->
     </div>
     <div class="model-buttons-div">
       <div class="model-button-div" v-on:click="saveNewCategory">保存</div>
+      <div class="model-button-div" v-on:click="hideModel">取消</div>
+    </div>
+  </div>
+
+  <div class="new-word-model" v-bind:class="{
+    showEditCategory: showEditCategory,
+  }">
+    <div class="model-title-div">
+      <div class="model-title-text-div">编辑分类</div>
+      <div class="model-title-close-div" v-on:click="hideModel">
+        <img src="yuqing/image/guanbi1.png" class="model-title-close-image" />
+      </div>
+    </div>
+    <div class="model-content-div">
+      <div style="
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: flex-start;
+          width: 90%;
+          margin: 1vw 0 0 0;
+        ">
+        分类：<input id="input" type="text" class="model-input" v-model="newCategory" placeholder="请输入新的分类"
+          style="margin: 0.1vw 0 0 0; width: 80%; height: 1.7vw" />
+      </div>
+    </div>
+    <div class="model-buttons-div">
+      <div class="model-button-div" v-on:click="editCategory">保存</div>
       <div class="model-button-div" v-on:click="hideModel">取消</div>
     </div>
   </div>
@@ -294,6 +350,12 @@ a {
 }
 
 .showNewWord {
+  top: 30%;
+  opacity: 1;
+  transition: all ease 500ms;
+}
+
+.showEditCategory {
   top: 30%;
   opacity: 1;
   transition: all ease 500ms;
@@ -621,6 +683,7 @@ import { reactive, ref, watch } from "vue";
 
 import SensitiveWords from "../model/SensitiveKeywords";
 import VueCookies from 'vue-cookies'
+import { Top,Bottom,Edit} from '@element-plus/icons-vue'
 //import { components } from "load-vue";
 export default {
   created() {
@@ -636,12 +699,14 @@ export default {
     return {
       types: [],
       words: [],
-      showNewCategory: false,
+      showEditCategory: false,
       showNewWord: false,
+      showNewCategory:false,
       selectedType: { value: '' },
       newWord: "",
       newCategory: "",
       order:'',
+      typeId:"",
       checkboxes: [],
       user: {
         roleRights: {
@@ -685,26 +750,46 @@ export default {
         return
       }
       this.newCategory=this.currentObj.value;
-      this.order=this.currentObj.order
+      this.order=this.currentObj.order;
       this.showNewCategory=true
     },
+    editTypeConfirm(row){
+      console.log(row);
+      this.newCategory=row.value;
+      this.order=row.order
+      this.typeId=row.id
+      this.showEditCategory=true
+    },
+    // deleteCategory() {
+    //   let _this = this;
+    //   let id = this.checkboxes[0];
+    //   this.checkboxes = this.checkboxes.slice(1);
+    //   let index;
+    //   for(index in this.checkboxes) {
+    //     console.log("checkboxes[" + index + "] = " + this.checkboxes[index]);
+    //   }
+    //   SensitiveWords.DeleteSensitiveCategory(
+    //     id,
+    //     function (data, response) {
+    //       if (_this.checkboxes.length > 0) {
+    //         _this.deleteCategory();
+    //       } else {
+    //         _this.GetTypes();
+    //       }
+    //     },
+    //     _this.errorHanlder
+    //   );
+    // },
     deleteCategory() {
       let _this = this;
-      let id = this.checkboxes[0];
-      this.checkboxes = this.checkboxes.slice(1);
-      console.log(id);
-      console.log(this.checkboxes);
-      SensitiveWords.DeleteSensitiveCategory(
-        id,
+        SensitiveWords.DeleteSensitiveCategorys(
+        JSON.stringify(_this.checkboxes),
         function (data, response) {
-          if (_this.checkboxes.length > 0) {
-            _this.deleteCategory();
-          } else {
-            _this.GetTypes();
-          }
+          _this.GetTypes();
         },
         _this.errorHanlder
-      );
+        );
+      _this.checkboxes=[];
     },
     saveNewCategory() {
       let _this = this;
@@ -731,6 +816,35 @@ export default {
           _this.errorHanlder
         );
       }
+      
+    },
+    editCategory() {
+      let _this = this;
+        SensitiveWords.UpdateSensitiveWordType(
+          {order:Number(_this.order),text: _this.newCategory,typeId:_this.typeId},
+          function (data, response) {
+            if (data.updateSensitiveWordType == 1) {
+              _this.GetTypes();
+              _this.hideModel();
+            }
+          },
+          _this.errorHanlder
+        );
+      
+    },
+    UpdateSensitiveWordTypes(){
+      let _this = this;
+      console.log(JSON.stringify(_this.types))
+        SensitiveWords.UpdateSensitiveWordTypes(
+          JSON.stringify(_this.types),
+          function (data, response) {
+            if (data.updateSensitiveWordTypes == 1) {
+              _this.GetTypes();
+              _this.hideModel();
+            }
+          },
+          _this.errorHanlder
+        );
       
     },
     showNewCategoryModel() {
@@ -844,6 +958,8 @@ export default {
         this.showNewWord = false;
       } else if (this.showNewCategory) {
         this.showNewCategory = false;
+      } else if (this.showEditCategory) {
+        this.showEditCategory = false;
       }
     },
     CheckBoxOnClick(id) {
@@ -853,14 +969,47 @@ export default {
         this.checkboxes.push(id);
       }
     },
-    CheckBoxOneOnClick(item){
+    // CheckBoxOneOnClick(item){
+    //   console.log(item);
+    //   this.currentObj={...item}
+    //   let id=item.id
+    //   if (this.checkboxes.indexOf(id) >= 0) {
+    //     this.checkboxes.splice(this.checkboxes.indexOf(id), 1);
+    //   } else {
+    //     this.checkboxes.push(id);
+    //   }
+    // },
+    CheckBoxTableOnClick(value,row){
+      let item=JSON.parse(JSON.stringify(row))
       this.currentObj={...item}
       let id=item.id
-      if (this.checkboxes.indexOf(id) >= 0) {
-        this.checkboxes.splice(this.checkboxes.indexOf(id), 1);
+      if(this.checkboxes.indexOf(id)>=0){
+        let index= this.checkboxes.indexOf(id)
+        this.checkboxes.splice(index,1);
+      }else{this.checkboxes.push(id)}
+    },
+    moveUp(index, row) {
+      console.log("上移", index, row);
+      if (index > 0) {
+        const upDate = this.types[index - 1];
+        this.types.splice(index - 1, 1);
+        this.types.splice(index, 0, upDate);
       } else {
-        this.checkboxes.push(id);
+        alert("已经是第一条，不可上移");
       }
+    },
+    // 下移
+    moveDown(index, row) {
+      console.log("下移", index, row);
+      if (index + 1 === this.types.length) {
+        alert("已经是最后一条，不可下移");
+      } else {
+        const downDate = this.types[index + 1];
+        this.types.splice(index + 1, 1);
+        this.types.splice(index, 0, downDate);
+      };
+      this.UpdateSensitiveWordTypes();
+      console.log(this.types);
     }
   },
 };

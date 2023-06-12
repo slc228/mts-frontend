@@ -45,10 +45,27 @@ export default class SensitiveKeywords  {
          ...data
       },
        success, failure);
-      
-  }
+    }
+
+    static UpdateSensitiveWordTypes(types, success, failure){
+        Request.Post("data/updateSensitiveWordTypes",
+        {
+            types:types
+        },
+         success, failure);
+    }
+
     static DeleteSensitiveCategory(id, success, failure){
         Request.Post("data/deleteSensitiveWordType",
+        {
+            typeId: id
+        },
+         success, failure);
+        
+    }
+
+    static DeleteSensitiveCategorys(id, success, failure){
+        Request.Post("data/deleteSensitiveWordTypes",
         {
             typeId: id
         },
