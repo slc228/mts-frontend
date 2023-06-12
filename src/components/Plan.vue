@@ -111,7 +111,7 @@
               </div>
               <div class="plan-content-row" style="margin: 1vw 0 0 0">
                 <div v-if="user.roleRights.determine" class="plan-button-div" v-on:click="viewList(item)">
-                  研判1
+                  研判
                 </div>
                 <div v-if="user.roleRights.directionalMonitoring" class="plan-button-div" v-on:click="showMonitor(item)">
                   定向监测
