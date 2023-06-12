@@ -81,7 +81,7 @@
     padding: 0 0 0 0.5vw;
     ">总量趋势 </div>
 
-                        <TotalMountChart ref="totalMountChart" :DarkMode="true" />
+                        <TotalMountChart ref="totalMountChart" :DarkMode="true" :planId="focusedPlan"/>
                     </div>
                     <div class="itemFooterDiv"></div>
                 </div>
@@ -104,7 +104,7 @@
     border-left: 0.4vw solid #02a6b5;
     padding: 0 0 0 0.5vw;
     "> 词云</div>
-                        <WordCloudChart ref="wordCloudChart" :DarkMode="true" />
+                        <WordCloudChart ref="wordCloudChart" :DarkMode="true" :planId="focusedPlan"/>
 
                     </div>
                     <div class="itemFooterDiv"></div>
@@ -888,7 +888,7 @@ export default {
     },
     methods: {
         errorHanlder(error) {
-            console.log(error);
+            // console.log(error);
             if (error.message.indexOf("403") >= 0) {
                 this.logOut();
             }
@@ -911,9 +911,9 @@ export default {
             this.GetPlans();
         },
         SelectPlan(item, index) {
-            console.log(item);
-            console.log(this.focusedPlan);
-            console.log(this.focusedPlan == item.fid);
+            // console.log(item);
+            // console.log(this.focusedPlan);
+            // console.log(this.focusedPlan == item.fid);
             if (this.focusedPlan == item.fid) {
                 this.focusedPlan = -1;
                 this.refresh();
@@ -939,8 +939,8 @@ export default {
             this.emotionMountChartOnShow(this.selectedPlan);
             this.eventTrackOnShow(this.selectedPlan);
 
-            console.log(index);
-            console.log(_this.selectedPlanIndex);
+            // console.log(index);
+            // console.log(_this.selectedPlanIndex);
 
             if (index != _this.selectedPlanIndex) {
                 _this.selectedPlanIndex = index;
@@ -965,8 +965,8 @@ export default {
                 10,
                 "1111",
                 function (data, response) {
-                    console.log(data);
-                    console.log(data.fangAnContent);
+                    // console.log(data);
+                    // console.log(data.fangAnContent);
                     _this.plans = data.fangAnContent;
                     
                     if (data.fangAnContent.length > 0) {
@@ -989,7 +989,7 @@ export default {
                         }
                       // _this.currentPlanIndex = 0;
                         _this.selectedPlanIndex++;
-                      console.log(_this.selectedPlanIndex);
+                      // console.log(_this.selectedPlanIndex);
                         if (_this.selectedPlanIndex == 3) {
                             _this.selectedPlanIndex = 0;
                             for (let i = 0; i < 3; i++) {
@@ -1001,11 +1001,11 @@ export default {
                                 }
                             }
                         }
-                        console.log(_this.plansOnboad);
-                        console.log(_this.plansOnboad[_this.selectedPlanIndex]);
+                        // console.log(_this.plansOnboad);
+                        // console.log(_this.plansOnboad[_this.selectedPlanIndex]);
                         
-                        console.log(_this.currentPlanIndex);
-                        console.log(_this.selectedPlanIndex);
+                        // console.log(_this.currentPlanIndex);
+                        // console.log(_this.selectedPlanIndex);
                         _this.ShowPlan(_this.plansOnboad[_this.selectedPlanIndex], _this.selectedPlanIndex);
                     } else {
                         _this.selectedPlanIndex = -1;
@@ -1020,8 +1020,8 @@ export default {
             let _this = this;
             Plan.GetIncrement(
                 function (data, response) {
-                    console.log(data);
-                    console.log(data.quantity);
+                    // console.log(data);
+                    // console.log(data.quantity);
                     if (data.quantity > _this.increment) {
                         $("#increment")
                             .prop("Counter", _this.increment)
@@ -1048,12 +1048,12 @@ export default {
             let _this = this;
             Plan.GetTotoal(
                 function (data, response) {
-                    console.log(data);
-                    console.log(data.quantity);
+                    // console.log(data);
+                    // console.log(data.quantity);
 
-                    console.log(_this.totalCount);
+                    // console.log(_this.totalCount);
                     if (data.quantity > _this.totalCount) {
-                        console.log($("#totalCount").text());
+                        // console.log($("#totalCount").text());
 
                         $("#totalCount")
                             .prop("Counter", _this.totalCount)
@@ -1080,7 +1080,7 @@ export default {
             let _this = this;
             Plan.GetPlanCount(
                 function (data, response) {
-                    console.log(data);
+                    // console.log(data);
 
                     if (data.quantity > _this.planCount) {
                         $("#plan")
@@ -1174,7 +1174,7 @@ export default {
             }
             this.currentTime = y.toString() + '/' + mt.toString() + '/' + day.toString() + ' ' +
                 h.toString() + ':' + m.toString() + ':' + s.toString();
-            console.log(this.currentTime);
+            // console.log(this.currentTime);
             this.clock = setTimeout(this.showTime, 1000); //设定定时器，循环运行     
 
         },

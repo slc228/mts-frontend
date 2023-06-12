@@ -1,7 +1,8 @@
 <template>
   <Index v-if="page == null || page == 'index'" />
         <Dashboard v-if="page == 'dashboard'" />
-  <div v-if="page != null && page != 'index' && page != 'dashboard'" style="
+        <Panel v-if="page == 'panel'" />
+  <div v-if="page != null && page != 'index' && page != 'dashboard' && page != 'panel'" style="
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -14,7 +15,7 @@
       height: 4vw;
       flex-shrink:0
     ">
-      <Header v-if="page != null && page != 'index' && page != 'dashboard'" />
+      <Header v-if="page != null && page != 'index' && page != 'dashboard' && page != 'panel'" />
     </div> -->
     <div style="
       display: flex;
@@ -33,7 +34,7 @@
       height: 100%;
       flex-shrink:0
     ">
-        <Menu v-if="page != null && page != 'index' && page != 'dashboard'" :page="page" />
+        <Menu v-if="page != null && page != 'index' && page != 'dashboard' && page != 'panel'" :page="page" />
       </div>
       <div style="
       display: flex;
@@ -53,7 +54,7 @@
         <SensitiveKeywords v-if="page == 'sensitivekeywords'" />
         <Search v-if="page == 'search'" :keywordText="key" />
         <Report v-if="page == 'report'" />
-        <Plan v-if="page == 'plan'" :category="category" :selectedPlanId="key"/>
+        <Plan v-if="page == 'plan'" />
       </div>
     </div>
   </div>
@@ -77,6 +78,7 @@ import HotArticles from "@/components/HotArticles.vue";
 import Topic from "@/components/Topic.vue";
 //import Library from "@/components/Library.vue";
 import Dashboard from "@/components/DashBoard.vue";
+import Panel from "@/components/Panel.vue"
 
 export default {
   components: {
@@ -94,31 +96,26 @@ export default {
     HotArticles,
     Topic,
     Dashboard,
+    Panel
   //  Library,
   },
   data() {
     return {
       page: null,
       key: "",
-      category: ""
     };
   },
   beforeMount() {
     this.page = this.$router.currentRoute.value.query.page;
+    console.log(this.page);
 
-    this.key = this.$router.currentRoute.value.query.key;
-      if (this.key == null) {
-        this.key = "";
-      }
-    this.category = this.$router.currentRoute.value.query.category;
-      if (this.category == null) {
-        this.category = "";
-      } 
+    if (this.page == "search") {
       this.key = this.$router.currentRoute.value.query.key;
       if (this.key == null) {
         this.key = "";
       }
-
+      console.log(this.key);
+    }
   },
 };
 </script>
