@@ -632,17 +632,19 @@
                 ">
               摘要分析
             </div>
-            <div style="
+            <div  style="
                   display: flex;
+                  flex-wrap: wrap;
                   flex-direction: row;
-                  align-items: center;
-                  justify-content: center;
+                  align-items: flex-start;
+                  justify-content: flex-start;
+                  width: 95%;
                   font-size: 1.1vw;
                   font-weight: 600;
-                  width: 100%;
+                  padding: 0 2% 0 2%;
                 ">
-              <div class="summaryDiv">
-                {{ Summary }}
+              <div class="summaryDiv" v-for="(item, index) in Summary.split('\n')">
+                {{ item }}
               </div>
             </div>
             <div style="
@@ -3291,7 +3293,7 @@ th div {
   align-items: flex-start;
   justify-content: flex-start;
   font-size: 0.9vw;
-  max-width: 20vw;
+  max-width: 80vw;
   cursor: pointer;
   margin: 0 1vw 1vw 0;
   transition: all ease 500ms;
